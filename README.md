@@ -34,7 +34,7 @@ Lastly, open your browser to localhost:1337/dummy to see the error.
 ### Explanation
 The essential issue is that sails is failing to translate js arrays into the text[] columnType in postgresql. The exact error is
 ```
-AdapterError: Unexpected error from database adapter: malformed array literal: "[4]"
+AdapterError: Unexpected error from database adapter: malformed array literal: "['foo']"
 ```
 
 This is triggered by a simple endpoint which attempts to create a record with Dummy.create({list: ['foo']});
