@@ -30,3 +30,13 @@ npm install
 Then create a postgres database named `sails-postgresql-text-array-bug` and boot the application with `sails lift`.
 
 Lastly, open your browser to localhost:1337/dummy to see the error.
+
+### Explanation
+The essential issue is that sails is failing to translate js arrays into the text[] columnType in postgresql. The exact error is
+```
+AdapterError: Unexpected error from database adapter: malformed array literal: "[4]"
+```
+
+This is triggered by a simple endpoint which attempts to create a record with Dummy.create({list: ['foo']});
+
+If you look at `api/models/Dummy.js` you'll see that there is a `list` attribute of type `json` and `columnType: 'text[]'`. In order for values to be correctly serialized and persisted in a postgresql `text[]` column, they should be wrapped in `{}` characters instead of `[]` when sent to the database. The correct serialization should look like `'({foo})'`, or `'({foo, bar})'` for multiple elements.
